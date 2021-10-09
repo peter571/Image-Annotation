@@ -4,16 +4,12 @@
   "private": true,
   "dependencies": {
     "@recogito/annotorious": "^2.5.6",
-    "@recogito/firebase-storage": "^0.1.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
-    "markerjs2": "^2.14.0",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.4",
     "react-dom": "^17.0.2",
-    "react-file-base64": "^1.0.3",
-    "react-image-annotation": "^0.9.10",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "web-vitals": "^1.1.2"

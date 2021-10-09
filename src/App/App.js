@@ -11,33 +11,24 @@ import { Container, Row, Col } from 'react-bootstrap';
 function App() {
 
 
-  const [selectedFile, setSelectedFile] = useState(null)
+  const [imgSrc, setImgSrc] = useState(null)
   const imgRef = useRef(null)
   const [fileName, setFileName] = useState('')
-  const [myStorage, setMyStorage] = useState(localStorage)
-
-  // The current Annotorious instance
   const [anno, setAnno] = useState(null)
 
 
-
   const handleFileChange = (e) => {
-    setSelectedFile(URL.createObjectURL(e.target.files[0]))
+    setImgSrc(URL.createObjectURL(e.target.files[0]))
     setFileName(e.target.files[0].name)
     console.log(fileName)
   }
 
-
-
-  // Init Annotorious when the component
-  // mounts, and keep the current 'anno'
-  // instance in the application state
   useEffect(() => {
+
     let annotorious = null;
 
     if (imgRef.current) {
 
-      // Init
       annotorious = new Annotorious({
         image: imgRef.current,
         widgets: [
@@ -45,10 +36,9 @@ function App() {
         ]
       });
 
-
-      // event handlers
       annotorious.on('createAnnotation', annotation => {
-        console.log('created', annotation);
+        localStorage.setItem(`${new Date()}`, JSON.stringify(annotation))
+        console.log('created', annotation)
       });
 
       annotorious.on('updateAnnotation', (annotation, previous) => {
@@ -60,30 +50,27 @@ function App() {
       });
     }
 
-    setMyStorage(localStorage)
-    // Keep current Annotorious instance in state
     setAnno(annotorious)
 
-    // Cleanup: destroy current instance
     return () => annotorious.destroy();
-  }, [selectedFile])
 
-  console.log(anno)
+  }, [imgSrc])
 
 
   const saveAnnoImg = () => {
-    myStorage.setItem(fileName, selectedFile)
-
+    alert('Changes Saved ')
   }
 
+
   const remove = () => {
-    setSelectedFile(null)
+    setImgSrc(null)
   }
 
   const handleDisplay = (imgValue) => {
-    setSelectedFile(imgValue)
-
+    setImgSrc(imgValue)
+    anno.getAnnotations()
   }
+
 
 
   return (
@@ -98,20 +85,20 @@ function App() {
               <div className="py-3">
                 <img
                   ref={imgRef}
-                  src={selectedFile}
+                  src={imgSrc}
                   className="image"
                   alt="Upload to Annotate" />
               </div>
 
 
-              {selectedFile !== null && (
+              {imgSrc !== null && (
                 <div>
-                  <button className="A-button" >Annotate</button>
+                  <button className="A-button">Annotate</button>
                   <button className="R-button" onClick={remove}>Remove</button>
                 </div>
               )}
 
-              {selectedFile === null ? (
+              {imgSrc === null ? (
                 <div>
                   <input onChange={handleFileChange} type="file" id="actual-btn" hidden />
                   <label className="label" htmlFor="actual-btn">Upload Photo</label>
@@ -130,16 +117,28 @@ function App() {
               <h1>My Annotations</h1>
 
               <div className="d-grid">
-                {myStorage.length === 0 ? (
+                {localStorage.length === 0 ? (
                   <p>You have not saved any image with Annotations</p>
                 ) : (
-                  Object.values(myStorage).map((imgValue, index) => (
-                    <button className="m-1" key={index} onClick={() => handleDisplay(imgValue)} >{`Annotation ${index + 1}`}</button>
-                    
-                  )
+
+                  Object.keys(localStorage).map((keys, index) => {
+
+                    const values = JSON.parse(localStorage.getItem(keys))
+
+                    const imgValue = values.target.source
+
+
+
+                    return (
+                      <button className="m-1" key={index} onClick={() => handleDisplay(imgValue)} >{`Annotation ${index + 1}`}</button>
+                    )
+                  }
                   ))}
               </div>
-              <button onClick={() => localStorage.clear()}>Delete All</button>
+              {localStorage.length !== 0 && (
+                <button onClick={() => localStorage.clear()}>Delete All</button>
+              )}
+              
             </Col>
           </Row>
         </Container>
