@@ -3,14 +3,19 @@
   height: 50%;
 }
 
-.image {
-  width: 100%;
+.img-wrapper {
+  width: 50%;
   height: auto;
-  display: block;
   margin-left: auto;
   margin-right: auto;
+  
+}
+
+.image {
   object-fit: contain;
-  cursor: crosshair;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .label {
@@ -18,21 +23,29 @@
   color: white;
   padding: 0.5rem;
   font-family: sans-serif;
-  border-radius: 0.3rem;
   cursor: pointer;
+  border-radius: 0.3rem;
   margin-top: 1rem;
 }
 
-.A-button, .R-button {
+.A-button {
     border: none;
+    text-decoration: none;
+    text-decoration-line: none;
+    text-decoration-style: none;
+    background-color: transparent;
+    
+    margin: 0 35px 0 35px;
+    cursor: crosshair;
+} 
+
+
+.R-button {
+  border: none;
     text-decoration: none;
     text-decoration-line: none;
     text-decoration-style: none;
     background-color: transparent;
     color: blue;
     margin: 0 35px 0 35px;
-} 
-
-.A-button:active, .R-button:active {
-  color: green auto 5px
 }

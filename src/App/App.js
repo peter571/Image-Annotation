@@ -18,16 +18,19 @@ function App() {
 
   const [imgSrc, setImgSrc] = useState(null)
   const imgRef = useRef(null)
-  // const [fileName, setFileName] = useState('')
+  const [fileName, setFileName] = useState('')
   const [anno, setAnno] = useState(null)
+  const [colorState, setColor] = useState('blue')
+  const [cursorState, setCursor] = useState('pointer')
 
 
   const handleFileChange = (e) => {
     setImgSrc(URL.createObjectURL(e.target.files[0]))
-    
+    setFileName(e.target.files[0].name)
+    console.log(fileName)
   }
 
- 
+
   useEffect(() => {
 
     let annotorious = null
@@ -42,9 +45,8 @@ function App() {
       })
 
       setImgSrc(imgSrc)
-    // JSON.parse(localStorage.getItem(imgSrc))
-    if (JSON.parse(localStorage.getItem(imgSrc)) === null && imgSrc !== null ) localStorage.setItem(imgSrc, JSON.stringify([]))
-
+      // JSON.parse(localStorage.getItem(imgSrc))
+      if (JSON.parse(localStorage.getItem(imgSrc)) === null && imgSrc !== null) localStorage.setItem(imgSrc, JSON.stringify([]))
 
 
       annotorious.on('createAnnotation', function (annotation) {
@@ -61,15 +63,20 @@ function App() {
     }
 
     setAnno(annotorious)
-  
+
 
     if (imgSrc !== null) return () => annotorious.destroy()
 
   }, [imgSrc])
 
 
+  console.log(fileName)
+
+
   const saveAnnoImg = () => {
     setImgSrc(null)
+    setColor('blue')
+    setCursor('pointer')
     alert('Changes Saved! Upload new photo!')
   }
 
@@ -78,22 +85,26 @@ function App() {
     anno.clearAnnotations()
   }
 
-  const handleDisplay = (key) => {
+  const handleDisplay = async (key) => {
     let imgValue = key
     setImgSrc(imgValue)
-    let imgAnnotations = JSON.parse(localStorage.getItem(imgValue))
+    try {
+      let imgAnnotations = await JSON.parse(localStorage.getItem(imgValue))
+      anno.setAnnotations(imgAnnotations)
+    } catch (error) {
+      console.log(error)
+    }
 
-    console.log(imgAnnotations)
-    anno.setAnnotations(imgAnnotations)
-    
-    
   }
 
+  const changeColor = () => {
+    setColor('green')
+  }
 
-  // Object.keys(localStorage).forEach((key) => (
-    
-  //   // console.log(JSON.parse(localStorage.getItem(key)))
-  // ))
+  const annotate = () => {
+    changeColor()
+    setCursor('crosshair')
+  }
 
 
   return (
@@ -104,18 +115,19 @@ function App() {
 
           <h1>Annotation Demo.</h1>
 
-          <div className="py-3">
+          <div className="img-wrapper" style={{ cursor: cursorState }}>
             <img
               ref={imgRef}
               src={imgSrc}
               className="image"
-              alt="Upload to Annotate" />
+              alt="Upload to Annotate"
+            />
           </div>
 
 
           {imgSrc !== null && (
             <div>
-              <button className="A-button">Annotate</button>
+              <button className="A-button" onClick={annotate} style={{ color: colorState }}>Annotate</button>
               <button className="R-button" onClick={remove}>Remove</button>
             </div>
           )}
