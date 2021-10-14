@@ -2,15 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Annotorious } from '@recogito/annotorious'
 import './App.css'
 
-// import { initializeApp } from "firebase/app"
-// import { getFirestore as db } from "firebase/firestore"
-
-
 import '@recogito/annotorious/dist/annotorious.min.css'
 import { Container, Row, Col } from 'react-bootstrap'
-
-
-
 
 
 function App() {
@@ -45,17 +38,16 @@ function App() {
       })
 
       setImgSrc(imgSrc)
-      // JSON.parse(localStorage.getItem(imgSrc))
+
       if (JSON.parse(localStorage.getItem(imgSrc)) === null && imgSrc !== null) localStorage.setItem(imgSrc, JSON.stringify([]))
 
 
-      annotorious.on('createAnnotation', function (annotation) {
+      annotorious.on('createAnnotation', async (annotation) => {
 
-        let storage = JSON.parse(localStorage.getItem(imgSrc))
+        let storage = await JSON.parse(localStorage.getItem(imgSrc))
         storage.push(annotation)
         localStorage.setItem(imgSrc, JSON.stringify(storage))
 
-        // JSON.parse(localStorage.getItem(imgRef.current)).push(annotation)
         console.log('Stored annotation')
 
       })
@@ -74,10 +66,10 @@ function App() {
 
 
   const saveAnnoImg = () => {
-    setImgSrc(null)
+    alert('Changes Saved! Upload new photo!')
     setColor('blue')
     setCursor('pointer')
-    alert('Changes Saved! Upload new photo!')
+    setImgSrc(null)
   }
 
 
@@ -97,12 +89,8 @@ function App() {
 
   }
 
-  const changeColor = () => {
-    setColor('green')
-  }
-
   const annotate = () => {
-    changeColor()
+    setColor('green')
     setCursor('crosshair')
   }
 
@@ -116,12 +104,16 @@ function App() {
           <h1>Annotation Demo.</h1>
 
           <div className="img-wrapper" style={{ cursor: cursorState }}>
-            <img
-              ref={imgRef}
-              src={imgSrc}
-              className="image"
-              alt="Upload to Annotate"
-            />
+
+            {
+              <img
+                ref={imgRef}
+                src={imgSrc}
+                className="image"
+                alt="Upload to Annotate"
+              />
+            }
+
           </div>
 
 
@@ -148,18 +140,18 @@ function App() {
 
         <Col>
 
-          <h1>My Annotations</h1>
+          <h2>My Annotations</h2>
 
           <div className="d-grid">
-            {
+            {localStorage.length === 0 ? (
+              <p>No annotations yet</p>
+            ) : (
               Object.keys(localStorage).map((key, index) => (
 
                 <button className="m-1" key={index} onClick={() => handleDisplay(key)}>{`Annotation ${index + 1}`}</button>
 
               ))
-            }
-            {/* console.log(key)
-                // console.log(JSON.parse(localStorage.getItem(key))) */}
+            )}
 
           </div>
 
