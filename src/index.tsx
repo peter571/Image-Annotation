@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App/App';
+import { AnnotationProvider } from './context/context';
 
 ReactDOM.render(
-  <React.StrictMode>
+    <AnnotationProvider>
     <App />
-  </React.StrictMode>,
+    </AnnotationProvider>,
   document.getElementById('root')
 );
